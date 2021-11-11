@@ -9,7 +9,7 @@ export type ConnectStateProps = {
   updateHost: (payload: string) => Record<string, unknown>;
   updateUser: (payload: string) => Record<string, unknown>;
   updatePassword: (payload: string) => Record<string, unknown>;
-  onLogin: (payload: string) => Record<string, unknown>;
+  onLogin: (user: string, password: string, host: string) => void;
   host: string;
   user: string;
   password: string;
@@ -112,7 +112,10 @@ const _Connect: React.FC<ConnectProps & ConnectStateProps> = ({
         </div>
       </div>
       <div className="panel-block">
-        <Button onClick={onLogin} className={btnStyle} data-testid="login-button">
+        <Button
+          onClick={() => onLogin(user, password, host)}
+          className={btnStyle}
+          data-testid="login-button">
           Login
         </Button>
       </div>
