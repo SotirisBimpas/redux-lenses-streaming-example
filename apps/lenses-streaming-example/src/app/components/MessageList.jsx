@@ -34,33 +34,27 @@ class MessageList extends React.Component {
     isVisible, // This row is visible within the List (eg it is not an overscanned row)
     style // Style object to be applied to row (to position it)
   }) => {
-    let arr = [],
-      keys = [];
-    Object.keys(JSON.parse(messages[index].key)).forEach(function(k) {
-      keys.push({ label: k, value: JSON.parse(messages[index].key)[k] });
-    });
-    Object.keys(JSON.parse(messages[index].value)).forEach(function(k) {
-      arr.push({ label: k, value: JSON.parse(messages[index].value)[k] });
+    let arr = []
+    Object.keys(messages[index].value).forEach(function(k) {
+      arr.push({ label: k, value: messages[index].value[k] });
     });
     return (
       <div
         key={key}
         style={style}
-        className="message-row columns ws-message-list is-multiline"
+        className="message-row columns ws-message-list is-multiline is-flex is-flex-direction-column is-flex-wrap-wrap"
         onClick={this.onShowRowDetails.bind(this, messages[index])}
       >
         <div className="column is-2">
           <div>Index</div>
           {index}
         </div>
-        {keys.map(item => (
-          <MessageListItem
-            className="key"
-            key={item.label}
-            label={item.label}
-            value={item.value}
-          />
-        ))}
+        <MessageListItem
+          className="key"
+          key={messages[index].key}
+          label='key'
+          value={messages[index].key}
+        />
         {arr.map(item => (
           <MessageListItem
             key={item.label}
@@ -93,7 +87,7 @@ class MessageList extends React.Component {
                     this.list = list;
                   }}
                   width={width}
-                  height={290}
+                  height={320}
                   rowCount={messages.length}
                   rowHeight={160}
                   rowRenderer={this.rowRenderer(messages)}
@@ -110,7 +104,7 @@ class MessageList extends React.Component {
 class MessageListItem extends React.Component {
   render() {
     return (
-      <div className="column is-2">
+      <div className="column is-2" style={{maxHeight: '33%', width: '33,33%'}}>
         <div>{this.props.label}</div>
         {this.props.value}
       </div>
