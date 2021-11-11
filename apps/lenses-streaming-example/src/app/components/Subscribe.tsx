@@ -7,15 +7,17 @@ import { Message, State } from "../config/state";
 
 export type SubscribeStateProps = {
   messages: Message[];
+  messageReceived: (payload: Message) => Record<string, unknown>;
 };
 
 export type SubscribeProps = {
-  clearMessages: ()=>void
+  clearMessages: ()=>void,
 };
 
 const _Subscribe: React.FC<SubscribeProps & SubscribeStateProps> = ({
   messages,
   clearMessages,
+  messageReceived
 }) => {
   const [sqls, setSqlState] = useState("");
 
@@ -26,8 +28,30 @@ const _Subscribe: React.FC<SubscribeProps & SubscribeStateProps> = ({
     setSqlState(value);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  const onSubscribe = () => {};
+  const onSubscribe = () => {
+      const ws = new WebSocket('ws://localhost:3030/api/ws/v2/sql/execute')
+      ws.onclose = (e) => {
+        console.log('Readystate is', ws.readyState, '.Backentd WebSocket is closed now.', e);
+      };
+      ws.onopen = (e) => {
+        console.log('Readystate is', ws.readyState, '.Backentd WebSocket is open now.', e);
+        const value = localStorage.getItem('token') || ''
+        const token = JSON.parse(value);
+        ws.send(JSON.stringify({
+          token: token,
+          sql: sqls,
+          stats: 2000
+        }))
+      };
+      ws.onerror = (e) => {
+        console.log('WebSocket error observed:', e);
+      };
+      ws.onmessage = (e) => {
+        const msg = JSON.parse(e.data);
+        if(msg.data.rownum <= 10 && msg.type === "RECORD") messageReceived(msg.data);
+        if(msg.data.rownum === 10) ws.close(1000);
+    }
+  };
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const onUnsubscribe = (topic:string) => {};
