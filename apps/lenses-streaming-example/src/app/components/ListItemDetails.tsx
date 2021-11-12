@@ -38,8 +38,9 @@ const ListItemDetails: React.FC<ListItemDetailsProps> = ({
 
   const arr: IData[] = [];
 
-  const { value } = message;
-  if (value) {
+  console.log({ message })
+  if (message?.value) {
+    const { value } = message;
     Object.keys(value).forEach(function (k) {
       arr.push({ label: k, value: value[k] });
     });

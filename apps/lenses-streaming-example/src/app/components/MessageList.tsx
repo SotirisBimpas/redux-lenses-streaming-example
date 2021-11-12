@@ -1,35 +1,49 @@
 import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
-import { connect } from "react-redux";
+import { connect, MapStateToProps } from "react-redux";
 import { List, AutoSizer } from "react-virtualized";
 import { actions } from "../actions";
+import { Message, State } from "../config/state";
 import ListItemDetails from "./ListItemDetails";
 
-function MessageList(props) {
-  const [message, setMessage] = useState();
-  const { messages, onCommitMessage } = props;
-  const list = useRef();
-  console.log({props})
+type Props = {
+  onCommitMessage: (message: Message) => void;
+  messages: Message[];
+}
+
+export type StateProps = {
+  message: Message;
+};
+
+const MessageList: React.FC<Props> = ({ messages, onCommitMessage }) => {
+  const [message, setMessage] = useState<Message | null>(null);
+  const list = useRef<List | null>(null);
 
   useEffect(() => {
     if (!message) {
-      list.current.scrollToRow(messages.length);
+      list.current && list.current.scrollToRow(messages.length);
     }
   }, [message, messages.length])
 
-  const onShowRowDetails = d => {
+  const onShowRowDetails = (d: Message) => {
     setMessage(d);
   };
 
-  const rowRenderer = messages => ({
+  const rowRenderer = (messages: Message[]) => ({
     key, // Unique key within array of rows
     index, // Index of row within collection
     isScrolling, // The List is currently being scrolled
     isVisible, // This row is visible within the List (eg it is not an overscanned row)
     style // Style object to be applied to row (to position it)
+  }: {
+    key: string;
+    index: number;
+    isScrolling: boolean;
+    isVisible: boolean;
+    style: React.CSSProperties | undefined;
   }) => {
-    let arr = []
-    Object.keys(messages[index].value).forEach(function(k) {
+    const arr: { label: string, value: string }[] = [];
+    Object.keys(messages[index].value).forEach(function (k) {
       arr.push({ label: k, value: messages[index].value[k] });
     });
     return (
@@ -70,7 +84,7 @@ function MessageList(props) {
       <nav className="panel">
         <div className="panel-block">
           <AutoSizer className="autosizer-bulma-fix">
-            {({ height, width, disableHeight = true }) => (
+            {({ height, width }) => (
               <List
                 ref={ref => list.current = ref}
                 width={width}
@@ -87,24 +101,29 @@ function MessageList(props) {
   );
 }
 
-function MessageListItem(props) {
+type ItemProps = {
+  label: string;
+  value: string;
+  className?: string;
+}
+
+const MessageListItem: React.FC<ItemProps> = ({ label, value, className }) => {
   return (
-    <div className="column is-2" style={{maxHeight: '33%', width: '33,33%'}}>
-      <div>{props.label}</div>
-      {props.value}
-    </div>
+    <div
+      className={`column is-2 ${className || ''}`}
+      style={{ maxHeight: '33%', width: '33,33%' }
+      }>
+      <div>{label}</div>
+      {value}
+    </div >
   );
 }
 
-MessageList.defaultProps = {};
-
-MessageList.propTypes = {
-  onCommitMessage: PropTypes.func.isRequired,
-  messages: PropTypes.array.isRequired,
-  message: PropTypes.object
-};
-
-const mapStateToProps = state => ({
+const mapStateToProps: MapStateToProps<
+  StateProps,
+  Props,
+  State
+> = (state: State) => ({
   message: state.session.message,
 });
 
