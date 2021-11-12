@@ -1,33 +1,27 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { List, AutoSizer } from "react-virtualized";
 import { actions } from "../actions";
 import ListItemDetails from "./ListItemDetails";
 
-class MessageList extends React.Component {
-  constructor(props) {
-    super(props);
+function MessageList(props) {
+  const [message, setMessage] = useState();
+  const { messages, onCommitMessage } = props;
+  const list = useRef();
+  console.log({props})
 
-    this.onShowRowDetails = this.onShowRowDetails.bind(this);
-    this.rowRenderer = this.rowRenderer.bind(this);
-
-    this.state = {
-      message: undefined
-    };
-  }
-
-  componentDidUpdate() {
-    if (!this.state.message) {
-      this.list.scrollToRow(this.props.messages.length);
+  useEffect(() => {
+    if (!message) {
+      list.current.scrollToRow(messages.length);
     }
-  }
+  }, [message, messages.length])
 
-  onShowRowDetails = d => {
-    this.setState({ message: d });
+  const onShowRowDetails = d => {
+    setMessage(d);
   };
 
-  rowRenderer = messages => ({
+  const rowRenderer = messages => ({
     key, // Unique key within array of rows
     index, // Index of row within collection
     isScrolling, // The List is currently being scrolled
@@ -43,7 +37,7 @@ class MessageList extends React.Component {
         key={key}
         style={style}
         className="message-row columns ws-message-list is-multiline is-flex is-flex-direction-column is-flex-wrap-wrap"
-        onClick={this.onShowRowDetails.bind(this, messages[index])}
+        onClick={() => onShowRowDetails(messages[index])}
       >
         <div className="column is-2">
           <div>Index</div>
@@ -66,50 +60,40 @@ class MessageList extends React.Component {
     );
   };
 
-  render() {
-    const { messages, onCommitMessage } = this.props;
-    const { onShowRowDetails } = this;
-    const { message } = this.state;
-
-    return (
-      <div>
-        <ListItemDetails
-          message={message}
-          onCommitMessage={onCommitMessage}
-          onShowRowDetails={onShowRowDetails}
-        />
-        <nav className="panel">
-          <div className="panel-block">
-            <AutoSizer className="autosizer-bulma-fix">
-              {({ height, width, disableHeight = true }) => (
-                <List
-                  ref={list => {
-                    this.list = list;
-                  }}
-                  width={width}
-                  height={320}
-                  rowCount={messages.length}
-                  rowHeight={160}
-                  rowRenderer={this.rowRenderer(messages)}
-                />
-              )}
-            </AutoSizer>
-          </div>
-        </nav>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <ListItemDetails
+        message={message}
+        onCommitMessage={onCommitMessage}
+        onShowRowDetails={onShowRowDetails}
+      />
+      <nav className="panel">
+        <div className="panel-block">
+          <AutoSizer className="autosizer-bulma-fix">
+            {({ height, width, disableHeight = true }) => (
+              <List
+                ref={ref => list.current = ref}
+                width={width}
+                height={320}
+                rowCount={messages.length}
+                rowHeight={160}
+                rowRenderer={rowRenderer(messages)}
+              />
+            )}
+          </AutoSizer>
+        </div>
+      </nav>
+    </div>
+  );
 }
 
-class MessageListItem extends React.Component {
-  render() {
-    return (
-      <div className="column is-2" style={{maxHeight: '33%', width: '33,33%'}}>
-        <div>{this.props.label}</div>
-        {this.props.value}
-      </div>
-    );
-  }
+function MessageListItem(props) {
+  return (
+    <div className="column is-2" style={{maxHeight: '33%', width: '33,33%'}}>
+      <div>{props.label}</div>
+      {props.value}
+    </div>
+  );
 }
 
 MessageList.defaultProps = {};
