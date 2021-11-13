@@ -27,7 +27,18 @@ export const showRowDetails = (payload: Message) => ({
 export const messageReceived = (payload: Message) => ({
   type: 'MESSAGE_RECEIVED',
   payload
-}) as const
+}) as const;
+
+export const updateMin = (payload: string) => ({
+  type: 'UPDATE_MIN',
+  payload
+}) as const;
+
+export const updateMax = (payload: string) => ({
+  type: 'UPDATE_MAX',
+  payload
+}) as const;
+
 
 export const actions = {
   updateHost,
@@ -35,7 +46,9 @@ export const actions = {
   updatePassword,
   clearMessages,
   showRowDetails,
-  messageReceived
+  messageReceived,
+  updateMin,
+  updateMax
 };
 
 export type Action = ReturnType<typeof actions[keyof typeof actions]>

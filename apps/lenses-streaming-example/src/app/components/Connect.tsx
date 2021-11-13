@@ -133,6 +133,6 @@ const mapStateToProps = (state: State) => ({
   password: state.session.password,
 });
 
-const Connect =  connect(mapStateToProps, mapDispatchToProps)(_Connect);
+const Connect = connect(mapStateToProps, mapDispatchToProps)(_Connect);
 
 export default Connect;

@@ -13,12 +13,13 @@ export type MainContainerProps = {
 
 export type MainContainerStateProps = {
   messages: Message[];
+  filteredMessages: Message[];
 };
 
 const _MainContainer: React.FC<MainContainerProps & MainContainerStateProps> =
-  ({ messages, commit }) => {
+  ({ messages, filteredMessages, commit }) => {
     const loginUser = (user: string, password: string, host: string) => {
-      const data = {  
+      const data = {
         user,
         password,
       };
@@ -27,7 +28,8 @@ const _MainContainer: React.FC<MainContainerProps & MainContainerStateProps> =
         localStorage.setItem('token', JSON.stringify(token));
       });
     };
-    return(
+    const list = filteredMessages.length ? filteredMessages : messages.length ? messages : []
+    return (
       <div className="container app">
         <div className="columns">
           <div className="column">
@@ -37,14 +39,14 @@ const _MainContainer: React.FC<MainContainerProps & MainContainerStateProps> =
         <div className="columns">
           <div className="column">
             <Subscribe />
-            {messages.length ? (
-              <MessageList messages={messages} onCommitMessage={commit} />
+            {list.length ? (
+              <MessageList messages={list} onCommitMessage={commit} />
             ) : null}
           </div>
         </div>
       </div>
     )
-}
+  }
 
 const mapStateToProps: MapStateToProps<
   MainContainerStateProps,
@@ -52,6 +54,7 @@ const mapStateToProps: MapStateToProps<
   State
 > = (state: State) => ({
   messages: state.session.messages,
+  filteredMessages: state.session.filteredMessages,
 });
 
 export const MainContainer = connect(mapStateToProps)(_MainContainer);

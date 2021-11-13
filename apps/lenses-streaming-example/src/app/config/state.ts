@@ -9,6 +9,9 @@ export type SessionState = {
     user: string;
     password: string;
     message?: Message;
+    min: string;
+    max: string;
+    filteredMessages: Message[];
 }
 
 export type State = {
