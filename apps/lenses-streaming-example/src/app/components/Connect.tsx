@@ -13,6 +13,7 @@ export type ConnectStateProps = {
   host: string;
   user: string;
   password: string;
+  error: string;
 };
 
 export type ConnectProps = {
@@ -24,6 +25,7 @@ const _Connect: React.FC<ConnectProps & ConnectStateProps> = ({
   host,
   user,
   password,
+  error,
   connection = false,
   heartbeatCount = 0,
   updateHost,
@@ -115,9 +117,21 @@ const _Connect: React.FC<ConnectProps & ConnectStateProps> = ({
         <Button
           onClick={() => onLogin(user, password, host)}
           className={btnStyle}
-          data-testid="login-button">
+          data-testid="login-button"
+          disabled={!host || !user || !password}
+        >
           Login
         </Button>
+      </div>
+      <div style={{ padding: "8px 12px" }}>
+        {error && <article className="message is-danger">
+          <div className="message-header">
+            <p>Login falied</p>
+          </div>
+          <div className="message-body">
+            {error}
+          </div>
+        </article>}
       </div>
     </nav>
   );

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { connect, MapStateToProps } from "react-redux";
 import axios from 'axios';
 
@@ -18,22 +18,30 @@ export type MainContainerStateProps = {
 
 const _MainContainer: React.FC<MainContainerProps & MainContainerStateProps> =
   ({ messages, filteredMessages, commit }) => {
+    const [error, setError] = useState<string>('');
+
     const loginUser = (user: string, password: string, host: string) => {
       const data = {
         user,
         password,
       };
-      axios.post(`http://${host}/api/login`, data).then((res) => {
-        const token = res.data;
-        localStorage.setItem('token', JSON.stringify(token));
-      });
+      axios.post(`http://${host}/api/login`, data)
+        .then((res) => {
+          if (res.status === 200) {
+            const token = res.data;
+            localStorage.setItem('token', JSON.stringify(token));
+          }
+        })
+        .catch(err => {
+          setError('Please check your host and credentials')
+        })
     };
     const list = filteredMessages.length ? filteredMessages : messages.length ? messages : []
     return (
       <div className="container app">
         <div className="columns">
           <div className="column">
-            <Connect onLogin={(user, password, host) => loginUser(user, password, host)} />
+            <Connect onLogin={(user, password, host) => loginUser(user, password, host)} error={error} />
           </div>
         </div>
         <div className="columns">

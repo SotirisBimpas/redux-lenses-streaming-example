@@ -81,7 +81,7 @@ const _Subscribe: React.FC<SubscribeProps & SubscribeStateProps> = ({
         </div>
       </div>
       <div className="panel-block">
-        <div className="control isFlex">
+        <div className="control is-flex">
           <Button
             style={{ marginRight: "10px" }}
             onClick={onSubscribe}
