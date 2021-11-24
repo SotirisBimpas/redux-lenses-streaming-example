@@ -5,6 +5,7 @@ import { List, AutoSizer } from "react-virtualized";
 import { actions } from "../actions";
 import { Message, State } from "../config/state";
 import ListItemDetails from "./ListItemDetails";
+import { selectMessage } from "../selectors";
 
 type Props = {
   onCommitMessage: (message: Message) => void;
@@ -124,7 +125,7 @@ const mapStateToProps: MapStateToProps<
   Props,
   State
 > = (state: State) => ({
-  message: state.session.message,
+  message: selectMessage(state),
 });
 
 const mapDispatchToProps = {

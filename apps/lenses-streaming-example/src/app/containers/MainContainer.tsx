@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { connect, MapStateToProps } from "react-redux";
 import axios from 'axios';
+import { selectMessages, selectFilteredMessages } from "../selectors";
 
 import Connect from "../components/Connect";
 import Subscribe from "../components/Subscribe";
@@ -36,6 +37,7 @@ const _MainContainer: React.FC<MainContainerProps & MainContainerStateProps> =
           setError('Please check your host and credentials')
         })
     };
+
     const list = filteredMessages.length ? filteredMessages : messages.length ? messages : []
     return (
       <div className="container app">
@@ -61,8 +63,9 @@ const mapStateToProps: MapStateToProps<
   MainContainerProps,
   State
 > = (state: State) => ({
-  messages: state.session.messages,
-  filteredMessages: state.session.filteredMessages,
+  messages: selectMessages(state),
+  filteredMessages: selectFilteredMessages(state),
 });
 
 export const MainContainer = connect(mapStateToProps)(_MainContainer);
+

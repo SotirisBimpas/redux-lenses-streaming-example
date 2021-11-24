@@ -4,6 +4,7 @@ import classnames from "classnames";
 import Button from "./Button";
 import { actions } from "../actions";
 import { State } from "../config/state";
+import { selectHost, selectUser, selectPassword } from "../selectors";
 
 export type ConnectStateProps = {
   updateHost: (payload: string) => Record<string, unknown>;
@@ -142,11 +143,12 @@ const mapDispatchToProps = {
 };
 
 const mapStateToProps = (state: State) => ({
-  host: state.session.host,
-  user: state.session.user,
-  password: state.session.password,
+  host: selectHost(state),
+  user: selectUser(state),
+  password: selectPassword(state),
 });
 
 const Connect = connect(mapStateToProps, mapDispatchToProps)(_Connect);
 
-export default Connect;
+export default React.memo(Connect);
+

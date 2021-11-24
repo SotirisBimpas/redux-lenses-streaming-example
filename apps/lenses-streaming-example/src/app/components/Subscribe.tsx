@@ -4,6 +4,12 @@ import classnames from "classnames";
 import { actions } from "../actions";
 import Button from "./Button";
 import { Message, State } from "../config/state";
+import {
+  selectMin,
+  selectMax,
+  selectMessages,
+  selectFilteredMessages
+} from "../selectors";
 
 export type SubscribeStateProps = {
   messages: Message[];
@@ -56,8 +62,11 @@ const _Subscribe: React.FC<SubscribeProps & SubscribeStateProps> = ({
     };
     ws.onmessage = (e) => {
       const msg = JSON.parse(e.data);
-      if (msg.data.rownum <= 10000 && msg.type === "RECORD") messageReceived(msg.data);
-      if (msg.data.rownum === 10000) ws.close();
+      if (msg.data?.rownum === 10000 || !msg.data) {
+        ws.close();
+        return;
+      }
+      if (msg.data.rownum < 10000 && msg.type === "RECORD") messageReceived(msg.data);
     }
   };
 
@@ -127,9 +136,9 @@ const _Subscribe: React.FC<SubscribeProps & SubscribeStateProps> = ({
 }
 
 const mapStateToProps = (state: State) => ({
-  messages: state.session.messages,
-  min: state.session.min,
-  max: state.session.max,
+  messages: selectMessages(state),
+  min: selectMin(state),
+  max: selectMax(state),
 });
 
 const mapDispatchToProps = {

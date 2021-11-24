@@ -11,7 +11,6 @@ export type SessionState = {
     message?: Message;
     min: string;
     max: string;
-    filteredMessages: Message[];
 }
 
 export type State = {
