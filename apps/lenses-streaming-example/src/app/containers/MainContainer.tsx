@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { connect, MapStateToProps } from "react-redux";
 import axios from 'axios';
 import { selectMessages, selectFilteredMessages } from "../selectors";
@@ -21,7 +21,7 @@ const _MainContainer: React.FC<MainContainerProps & MainContainerStateProps> =
   ({ messages, filteredMessages, commit }) => {
     const [error, setError] = useState<string>('');
 
-    const loginUser = (user: string, password: string, host: string) => {
+    const onLogin = useCallback((user: string, password: string, host: string) => {
       const data = {
         user,
         password,
@@ -36,14 +36,14 @@ const _MainContainer: React.FC<MainContainerProps & MainContainerStateProps> =
         .catch(err => {
           setError('Please check your host and credentials')
         })
-    };
+    }, []);
 
     const list = filteredMessages.length ? filteredMessages : messages.length ? messages : []
     return (
       <div className="container app">
         <div className="columns">
           <div className="column">
-            <Connect onLogin={(user, password, host) => loginUser(user, password, host)} error={error} />
+            <Connect onLogin={onLogin} error={error} />
           </div>
         </div>
         <div className="columns">

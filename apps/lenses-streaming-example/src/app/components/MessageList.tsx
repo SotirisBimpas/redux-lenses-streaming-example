@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import PropTypes from "prop-types";
 import { connect, MapStateToProps } from "react-redux";
 import { List, AutoSizer } from "react-virtualized";
@@ -30,7 +30,7 @@ const MessageList: React.FC<Props> = ({ messages, onCommitMessage }) => {
     setMessage(d);
   };
 
-  const rowRenderer = (messages: Message[]) => ({
+  const rowRenderer = useCallback((messages: Message[]) => ({
     key, // Unique key within array of rows
     index, // Index of row within collection
     isScrolling, // The List is currently being scrolled
@@ -73,7 +73,7 @@ const MessageList: React.FC<Props> = ({ messages, onCommitMessage }) => {
         ))}
       </div>
     );
-  };
+  }, []);
 
   return (
     <div>
@@ -108,7 +108,7 @@ type ItemProps = {
   className?: string;
 }
 
-const MessageListItem: React.FC<ItemProps> = ({ label, value, className }) => {
+const _MessageListItem: React.FC<ItemProps> = ({ label, value, className }) => {
   return (
     <div
       className={`column is-2 ${className || ''}`}
@@ -119,6 +119,8 @@ const MessageListItem: React.FC<ItemProps> = ({ label, value, className }) => {
     </div >
   );
 }
+
+const MessageListItem = React.memo(_MessageListItem);
 
 const mapStateToProps: MapStateToProps<
   StateProps,

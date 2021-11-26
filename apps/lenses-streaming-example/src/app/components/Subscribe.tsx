@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { connect } from "react-redux";
 import classnames from "classnames";
 import { actions } from "../actions";
@@ -42,7 +42,24 @@ const _Subscribe: React.FC<SubscribeProps & SubscribeStateProps> = ({
     setSqlState(value);
   }
 
-  const onSubscribe = () => {
+  const onInputChange = (event: React.SyntheticEvent<HTMLInputElement>) => {
+    const target = event.currentTarget;
+    const value = target.value;
+    const name = target.name;
+
+    switch (name) {
+      case "min":
+        updateMin(value);
+        break;
+      case "max":
+        updateMax(value);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const onSubscribe = useCallback(() => {
     const ws = new WebSocket('ws://localhost:3030/api/ws/v2/sql/execute')
     ws.onclose = (e) => {
       console.log('Readystate is', ws.readyState, '.Backentd WebSocket is closed now.', e);
@@ -68,7 +85,7 @@ const _Subscribe: React.FC<SubscribeProps & SubscribeStateProps> = ({
       }
       if (msg.data.rownum < 10000 && msg.type === "RECORD") messageReceived(msg.data);
     }
-  };
+  }, [messageReceived, sqls]);
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const onUnsubscribe = (topic: string) => { };
@@ -85,6 +102,7 @@ const _Subscribe: React.FC<SubscribeProps & SubscribeStateProps> = ({
               placeholder="SQLS"
               value={sqls}
               onChange={onSqlsChange}
+              name='sqls'
             />
           </p>
         </div>
@@ -113,7 +131,7 @@ const _Subscribe: React.FC<SubscribeProps & SubscribeStateProps> = ({
               placeholder="min"
               value={min}
               name="min"
-              onChange={e => updateMin(e.target.value)}
+              onChange={onInputChange}
             />
           </div>
           <div style={{ width: '20%' }}>
@@ -123,7 +141,7 @@ const _Subscribe: React.FC<SubscribeProps & SubscribeStateProps> = ({
               placeholder="max"
               value={max}
               name="max"
-              onChange={e => updateMax(e.target.value)}
+              onChange={onInputChange}
             />
           </div>
         </div>
