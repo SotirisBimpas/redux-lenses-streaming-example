@@ -8,6 +8,8 @@ import Subscribe from "../components/Subscribe";
 import MessageList from "../components/MessageList";
 import { Message, State } from "../config/state";
 
+import { Container, FormSection } from "../../assets/styles/styles";
+
 export type MainContainerProps = {
   commit: (message: Message) => void;
 };
@@ -40,21 +42,17 @@ const _MainContainer: React.FC<MainContainerProps & MainContainerStateProps> =
 
     const list = filteredMessages.length ? filteredMessages : messages.length ? messages : []
     return (
-      <div className="container app">
-        <div className="columns">
-          <div className="column">
-            <Connect onLogin={onLogin} error={error} />
-          </div>
-        </div>
-        <div className="columns">
-          <div className="column">
-            <Subscribe />
-            {list.length ? (
-              <MessageList messages={list} onCommitMessage={commit} />
-            ) : null}
-          </div>
-        </div>
-      </div>
+      <Container>
+        <FormSection>
+          <Connect onLogin={onLogin} error={error} />
+        </FormSection>
+        <FormSection>
+          <Subscribe />
+          {list.length ? (
+            <MessageList messages={list} onCommitMessage={commit} />
+          ) : null}
+        </FormSection>
+      </Container>
     )
   }
 

@@ -3,6 +3,20 @@ import { connect } from "react-redux";
 import classnames from "classnames";
 import { actions } from "../actions";
 import Button from "./Button";
+import FormInput from "./FormInput";
+import {
+  FormContainer,
+  FormHeader,
+  InputContainer,
+  FormField,
+  Input,
+  InputIcon,
+  ErrorMessageContainer,
+  ErrorMessageHeader,
+  ErrorMessageBody,
+  TextAreaContainer,
+  TextArea
+} from "../../assets/styles/styles";
 import { Message, State } from "../config/state";
 import {
   selectMin,
@@ -93,63 +107,55 @@ const _Subscribe: React.FC<SubscribeProps & SubscribeStateProps> = ({
   const btnStyle = classnames("button is-small is-info");
 
   return (
-    <nav className="ws-subscribe panel">
-      <div className="panel-heading">
-        <div className="field has-addons">
-          <p className="control is-expanded">
-            <textarea
-              className="textarea is-small is-info"
-              placeholder="SQLS"
-              value={sqls}
-              onChange={onSqlsChange}
-              name='sqls'
-            />
-          </p>
-        </div>
-      </div>
-      <div className="panel-block">
-        <div className="control is-flex">
-          <Button
-            style={{ marginRight: "10px" }}
-            onClick={onSubscribe}
-            className={btnStyle}
-            disabled={!sqls}
-          >
-            Subscribe
-          </Button>
-          <Button
-            style={{ marginRight: "10px" }}
-            onClick={clearMessages}
-            className="button is-small is-danger"
-          >
-            Clear Messages
-          </Button>
-          <div style={{ width: '20%', marginRight: "10px" }}>
-            <input
-              className="input is-small"
-              type="text"
-              placeholder="min"
-              value={min}
-              name="min"
-              onChange={onInputChange}
-            />
-          </div>
-          <div style={{ width: '20%' }}>
-            <input
-              className="input is-small"
-              type="text"
-              placeholder="max"
-              value={max}
-              name="max"
-              onChange={onInputChange}
-            />
-          </div>
-        </div>
-      </div>
-      <div className="panel-block">
-        <div className="control">Number of messages: {messages.length}</div>
-      </div>
-    </nav>
+    <FormContainer>
+      <FormHeader>
+        <TextAreaContainer>
+          <TextArea
+            placeholder="SQLS"
+            value={sqls}
+            onChange={onSqlsChange}
+            name='sqls'
+          />
+        </TextAreaContainer>
+      </FormHeader >
+      <FormField>
+        <Button
+          style={{ marginRight: "10px" }}
+          onClick={onSubscribe}
+          className={btnStyle}
+          disabled={!sqls}
+        >
+          Subscribe
+        </Button>
+        <Button
+          style={{ marginRight: "10px" }}
+          onClick={clearMessages}
+          className="button is-small is-danger"
+        >
+          Clear Messages
+        </Button>
+        <FormInput
+          type="text"
+          placeholder="min"
+          value={min}
+          name="min"
+          onChange={onInputChange}
+          width={150}
+          marginRight={10}
+        />
+        <FormInput
+          type="text"
+          placeholder="max"
+          value={max}
+          name="max"
+          onChange={onInputChange}
+          width={150}
+        />
+      </FormField>
+      <FormField>
+        Number of messages: {messages.length}
+      </FormField>
+    </FormContainer >
   );
 }
 

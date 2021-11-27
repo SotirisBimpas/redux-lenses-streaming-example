@@ -5,6 +5,18 @@ import Button from "./Button";
 import { actions } from "../actions";
 import { State } from "../config/state";
 import { selectHost, selectUser, selectPassword } from "../selectors";
+import FormInput from "./FormInput";
+import {
+  FormContainer,
+  FormHeader,
+  InputContainer,
+  FormField,
+  Input,
+  InputIcon,
+  ErrorMessageContainer,
+  ErrorMessageHeader,
+  ErrorMessageBody
+} from "../../assets/styles/styles";
 
 export type ConnectStateProps = {
   updateHost: (payload: string) => Record<string, unknown>;
@@ -58,63 +70,43 @@ const _Connect: React.FC<ConnectProps & ConnectStateProps> = ({
     "is-danger": connection,
   });
 
+
+
   return (
-    <nav className="panel">
-      <p className="panel-heading">Connection Details</p>
-      <div className="panel-block">
-        <p className="control has-icons-left">
-          <input
-            className="input is-small"
-            type="text"
-            placeholder="host"
-            value={host}
-            name="host"
-            onChange={onInputChange}
-          />
-          <span className="icon is-small is-left">
-            <i className="fa fa-server" />
-          </span>
-        </p>
-      </div>
-      <div className="panel-block">
-        <p className="control has-icons-left">
-          Heartbeat Count: {heartbeatCount}
-        </p>
-      </div>
-      <div>
-        <div className="panel-block">
-          <p className="control has-icons-left">
-            <input
-              className="input is-small"
-              type="text"
-              placeholder="User"
-              value={user}
-              name="user"
-              onChange={onInputChange}
-            />
-            <span className="icon is-small is-left">
-              <i className="fa fa-user" />
-            </span>
-          </p>
-        </div>
-        <div className="panel-block">
-          <p className="control has-icons-left">
-            <input
-              className="input is-small"
-              type="password"
-              placeholder="Password for Authentication"
-              value={password}
-              name="password"
-              onChange={onInputChange}
-              autoComplete="off"
-            />
-            <span className="icon is-small is-left">
-              <i className="fa fa-lock" />
-            </span>
-          </p>
-        </div>
-      </div>
-      <div className="panel-block">
+    <FormContainer>
+      <FormHeader>Connection Details</FormHeader>
+      <FormField>
+        <FormInput
+          type="text"
+          placeholder="host"
+          value={host}
+          name="host"
+          onChange={onInputChange}
+          icon="fa fa-server"
+        />
+      </FormField>
+      <FormField>
+        Heartbeat Count: {heartbeatCount}
+      </FormField>
+      <FormField>
+        <FormInput
+          type="text"
+          placeholder="User"
+          value={user}
+          name="user"
+          onChange={onInputChange}
+          icon="fa fa-user" />
+      </FormField>
+      <FormField>
+        <FormInput
+          type="password"
+          placeholder="Password for Authentication"
+          value={password}
+          name="password"
+          onChange={onInputChange}
+          icon="fa fa-lock" />
+      </FormField>
+      <FormField>
         <Button
           onClick={() => onLogin(user, password, host)}
           className={btnStyle}
@@ -123,18 +115,18 @@ const _Connect: React.FC<ConnectProps & ConnectStateProps> = ({
         >
           Login
         </Button>
-      </div>
-      <div style={{ padding: "8px 12px" }}>
-        {error && <article className="message is-danger">
-          <div className="message-header">
+      </FormField>
+      {error &&
+        <ErrorMessageContainer>
+          <ErrorMessageHeader>
             <p>Login falied</p>
-          </div>
-          <div className="message-body">
+          </ErrorMessageHeader>
+          <ErrorMessageBody>
             {error}
-          </div>
-        </article>}
-      </div>
-    </nav>
+          </ErrorMessageBody>
+        </ErrorMessageContainer>
+      }
+    </FormContainer >
   );
 };
 
